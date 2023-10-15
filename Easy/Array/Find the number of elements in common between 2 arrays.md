@@ -1,7 +1,8 @@
 Given two array sizes x and y and two arrays a[] and b[] find the number of elements in the union between these two arrays.
 
 The Union of the two arrays can be defined as the set containing distinct elements from both arrays. If there are repetitions, then only one occurrence of an element should be printed in the union.
-Input format:
+
+Input Format:
 ```
 x
 y
@@ -10,6 +11,7 @@ b[0] b[1] b[2] ... b[y-1]
 ```
 
 Example:
+
 Input:
 ```
 5
