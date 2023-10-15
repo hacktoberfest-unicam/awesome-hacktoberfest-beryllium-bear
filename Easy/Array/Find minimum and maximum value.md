@@ -1,7 +1,12 @@
 Given an array, find the maximum and the minimum element of the array using the minimum number of comparisons.
 
-Example:
+Input format:
+```
+x
+a[0] a[1] a[2] ... a[x-1]
+```
 
+Example:
 Input: 
 ```
 3 5 4 1 9
