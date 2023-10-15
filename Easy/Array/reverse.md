@@ -7,6 +7,7 @@ a[0] a[1] a[2] ... a[x-1]
 Note: if the input is a string, there is no space between values.
 
 Example:
+
 Input:
 ```
 1 2 3
