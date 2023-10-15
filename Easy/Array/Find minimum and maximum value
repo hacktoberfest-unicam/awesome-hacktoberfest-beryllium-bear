@@ -2,6 +2,12 @@ Given an array, find the maximum and the minimum element of the array using the 
 
 Example:
 
-Input: arr[] = {3, 5, 4, 1, 9}
-Output: Minimum element is: 1
-              Maximum element is: 9
+Input: 
+```
+3 5 4 1 9
+```
+Output:
+```
+Minimum element is: 1 (Verified with 5 comparison)
+Maximum element is: 9 (Verified with 5 comparison)
+```
