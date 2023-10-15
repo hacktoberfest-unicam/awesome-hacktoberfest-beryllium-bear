@@ -8,6 +8,6 @@ Input:
 ```
 Output:
 ```
-Minimum element is: 1 (Verified with 5 comparison)
-Maximum element is: 9 (Verified with 5 comparison)
+The minimum element is: 1 (Verified with 5 comparisons)
+The maximum element is: 9 (Verified with 5 comparisons)
 ```
