@@ -1,5 +1,9 @@
 # Printing
 
+Printing is the primary functionality to communicate messages to the users, also, it is used commonly while developing or dealing with APIs to understand the software behaviour in a fast and NON-elegant way.
+All programming languages provide such functions.
+
+
 In this problem, you are asked to print the message `Unicam & #TODO @Hacktoberfest 2023` using a language of your choice.
 It is important to complete this point using a programming language that you are not familiar with.
 
