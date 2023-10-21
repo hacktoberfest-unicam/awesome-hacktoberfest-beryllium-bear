@@ -3,7 +3,7 @@
 A Regular Expression (or RegEx) is a pattern (or filter) that describes a set of strings that matches the pattern. 
 In other words, a RegEx accepts a certain set of strings and rejects the rest.
 
-A RegEx consists of a sequence of characters, metacharacters (such as ., \d, \D, \s, \S, \w, \W) and operators (such as +, *, ?, |, ^). 
+A RegEx consists of a sequence of characters, metacharacters (such as., \d, \D, \s, \S, \w, \W), and operators (such as +, *, ?, |, ^).
 They are constructed by combining many smaller sub-expressions.
 
 
