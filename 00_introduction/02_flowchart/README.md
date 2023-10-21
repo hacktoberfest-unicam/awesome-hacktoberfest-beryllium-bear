@@ -22,3 +22,5 @@ While it is possible to draw flow charts using Paint, or any other image editor 
 - [Flowgorithm](http://www.flowgorithm.org/)
 - [Diagrams.net/Draw.io](https://draw.io/)
 - [Visual Paradigm Online](https://online.visual-paradigm.com/diagrams/features/flowchart-tool/)
+- [Canva](https://www.canva.com/en/)
+- [Miro](https://www.miro.com)
