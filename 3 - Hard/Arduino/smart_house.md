@@ -1,3 +1,5 @@
+# Smart Arduino home
+
 The goal here is to create an Arduino project to simulate a smart home.
 
 Some example of features such a house could be provided with are:

@@ -14,6 +14,7 @@ Note: Your solution should ask for the least amount of work possible to run and 
  - Short documentation/Readme containing instructions on how to run and use your service (especially if using libraries which have to be downloaded)
 
 ## Technologies:
+Here's some examples of the most common frameworks used
 You can mix and match from here, or use something else. Consider asking the organizers if you plan on using some dark technology no one knows
  
 Here's some examples of the most common frameworks used
