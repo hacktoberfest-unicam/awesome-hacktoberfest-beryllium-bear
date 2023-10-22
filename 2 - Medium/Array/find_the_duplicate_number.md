@@ -3,13 +3,13 @@ Return the repeated number.
 
 You must solve the problem without modifying the original array.
 
-Input Format:
+## Input Format:
 ```
 x
 a[0] a[1] a[2] ... a[x-1]
 ```
 
-Example 1:
+## Example 1:
 
 Input:
 ```
@@ -21,7 +21,7 @@ Output:
 2
 ```
 
-Example 2:
+## Example 2:
 
 Input: 
 ```

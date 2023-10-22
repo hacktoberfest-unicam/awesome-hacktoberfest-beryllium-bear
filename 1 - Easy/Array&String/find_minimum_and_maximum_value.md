@@ -1,15 +1,16 @@
-Given an array, find the maximum and the minimum element of the array using the minimum number of comparisons.
+Given an array A[] of length x, find the maximum and the minimum element of the array using the minimum number of comparisons.
 
-Input Format:
+## Input Format:
 ```
 x
 a[0] a[1] a[2] ... a[x-1]
 ```
 
-Example:
+## Example:
 
 Input: 
 ```
+5
 3 5 4 1 9
 ```
 Output:
