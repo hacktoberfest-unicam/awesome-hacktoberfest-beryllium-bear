@@ -1,5 +1,5 @@
 # Telegram Web Clone
-The title is already very explanatory, in fact in this new challenge you will have to try to emulate [Telegram](https://web.telegram.im/) by going to recreate both a frontend and a backend that, through the appropriate api, perform the same service provided by tg. Don't worry if the graphical touch will not be the same as the main site, after all we are computer science students..
+The title is already very explanatory, in fact in this new challenge you will have to try to emulate [Telegram](https://web.telegram.im/) by going to recreate both a frontend and a backend that, through the appropriate api, perform the same service provided by tg. The functionalities that are needed to complete the challenge are user login and the ability to send messages. Don't worry if the graphical touch will not be the same as the main site, after all we are computer science students..
 
 ## Limitation
 Login within the service must be via OAuth. To help you with OAuth implementation you can read these documentations 
