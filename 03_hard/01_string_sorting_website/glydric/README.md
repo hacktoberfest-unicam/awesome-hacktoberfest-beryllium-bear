@@ -1,0 +1,1 @@
+# Start backend and frontend separately with npm start
