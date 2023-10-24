@@ -29,6 +29,15 @@
 * After clicking the "Fork" button, GitHub will prompt you to choose where to fork the repository. You can choose to fork it to your personal account or to an organization that you are a member of. Select your account.
 * You will be redirected to your forked repository's page on GitHub. It's a copy of the original repository, and you have full control over it. Enjoy!
 ### How to contribute
+* Clone your fork locally (replace `<USERNAME` with your GitHub username)
+  ```
+  git clone https://github.com/<USERNAME>/awesome-hacktoberfest-beryllium-bear
+  ```
+* Create a new branch for each problem you're working on with this command (just make sure it's a different name for each problem)
+  ```
+  git checkout main
+  git checkout -b my_problem_01
+  ```
 * Make the necessary code changes in your local repository.
 * To stage your changes for commit, use the git add command. You can specify individual files or use a wildcard to stage all changes:
   ```
@@ -51,7 +60,7 @@
   ```
 ### How to PR
 * Go to your fork on GitHub and switch to the branch you just pushed.
-* Click on the "New Pull Request" button. GitHub will guide you through creating a pull request. Provide a clear title and description for your changes.
+* Click on the "New Pull Request" button. GitHub will guide you through creating a pull request. Make sure your pull request is pointing to the `hackathon` branch. Provide a clear title and description for your changes.
 
 NOTE: check your pr, we may leave messages or ask changes
 
