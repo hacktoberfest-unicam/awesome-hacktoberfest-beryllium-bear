@@ -24,7 +24,6 @@
 - [Hard level](https://github.com/hacktoberfest-unicam/awesome-hacktoberfest-beryllium-bear/tree/hard_level_problems)
 - [Extreme level](https://github.com/hacktoberfest-unicam/awesome-hacktoberfest-beryllium-bear/tree/extreme_level_problems)
 
-
 ### How to fork
 * Once you're on the repository's page, you'll see a button in the upper right-hand corner that says "Fork." Click it.
 * After clicking the "Fork" button, GitHub will prompt you to choose where to fork the repository. You can choose to fork it to your personal account or to an organization that you are a member of. Select your account.
