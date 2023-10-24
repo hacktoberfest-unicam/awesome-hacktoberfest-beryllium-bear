@@ -1,6 +1,6 @@
 public static void main(String[] args) {
     int[] arr = {64, 34, 25, 12, 22, 11};
-    int[] sortedArr = arraySorting.selectionSort(arr);
+    int[] sortedArr = selectionSort(arr);
 
     System.out.println("Sorted array:");
     for (int value : sortedArr) {
