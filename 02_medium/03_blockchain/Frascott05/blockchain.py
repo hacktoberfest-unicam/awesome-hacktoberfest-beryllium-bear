@@ -1,5 +1,5 @@
-import hashlib
 import time
+
 #crea il singolo blocco
 class Block:
     def __init__(self, index, previous_hash, data):
@@ -7,6 +7,8 @@ class Block:
         self.timestamp = time.time()
         self.data = data
         self.previous_hash = previous_hash
+    
+
 
 #creazione della catena
 class Blockchain:
@@ -26,17 +28,24 @@ class Blockchain:
         self.chain.append(new_block)                        #aggiungo il blocco alla catena
 
 
+def block_validitation(transaction):
+    if "sono scemo" == transaction or "odio unicam" == transaction or "a morte il Gabibbo" in transaction:
+        return False
+    else:
+        return True
 #utilizzo
 blockchain = Blockchain()
 #aggiungo blocchi finchè l'utente non vuole uscire
 while(True):
     transaction = input("Insert your transaction or press exit to terminate the programm: ")
     if transaction != "exit":
-        blockchain.add_block(transaction)
+        if block_validitation(transaction):
+            blockchain.add_block(transaction)
+        else:
+            print("Hai inserito una parola non valida")
     else:
         print("Arrivederci")
         break
-
 
 for block in blockchain.chain:
     print(f"Block {block.index} - Data: {block.data} - Time: {block.timestamp}")
