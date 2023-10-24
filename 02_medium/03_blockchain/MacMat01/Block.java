@@ -10,14 +10,12 @@ public class Block {
     private final String data;
     private final String previousHash;
     private final String hash;
-    private final int nonce;
 
-    public Block(int index, String data, String previousHash, int difficulty) {
+    public Block(int index, String data, String previousHash) {
         this.index = index;
         this.timestamp = System.currentTimeMillis();
         this.data = data;
         this.previousHash = previousHash;
-        this.nonce = mineBlock(difficulty);
         this.hash = calculateHash();
     }
 
@@ -41,12 +39,8 @@ public class Block {
         return hash;
     }
 
-    public int getNonce() {
-        return nonce;
-    }
-
     public String calculateHash() {
-        String dataToHash = index + timestamp + data + previousHash + nonce;
+        String dataToHash = index + timestamp + data + previousHash;
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(dataToHash.getBytes());
@@ -59,38 +53,31 @@ public class Block {
             throw new RuntimeException(e);
         }
     }
-
-    private int mineBlock(int difficulty) {
-        String target = new String(new char[difficulty]).replace('\0', '0');
-        int nonce = 0;
-        while (true) {
-            String attempt = calculateHash();
-            if (attempt.startsWith(target)) {
-                return nonce;
-            }
-            nonce++;
-        }
-    }
 }
 
 class Blockchain {
     private final List<Block> chain;
-    private final int difficulty; // Adjust the difficulty level.
 
-    public Blockchain(int difficulty) {
+    public Blockchain() {
         chain = new ArrayList<>();
-        this.difficulty = difficulty;
         // Create the genesis block (the first block in the chain)
-        chain.add(new Block(0, "Genesis Block", "0", difficulty));
+        chain.add(new Block(0, "Genesis Block", "0"));
     }
 
     public Block createBlock(String data) {
         Block previousBlock = chain.get(chain.size() - 1);
         int newIndex = previousBlock.getIndex() + 1;
         String previousHash = previousBlock.getHash();
-        Block newBlock = new Block(newIndex, data, previousHash, difficulty);
-        chain.add(newBlock);
-        return newBlock;
+        Block newBlock = new Block(newIndex, data, previousHash);
+
+        // Validate the new block before adding it to the chain.
+        if (BlockValidator.isValidNewBlock(newBlock, previousBlock)) {
+            chain.add(newBlock);
+            return newBlock;
+        } else {
+            System.out.println("Invalid block. Rejected.");
+            return null;
+        }
     }
 
     public boolean isValid() {
@@ -115,10 +102,8 @@ class Blockchain {
             System.out.println("Timestamp: " + block.getTimestamp());
             System.out.println("Data: " + block.getData());
             System.out.println("Previous Hash: " + block.getPreviousHash());
-            System.out.println("Nonce: " + block.getNonce());
             System.out.println("Hash: " + block.getHash());
             System.out.println();
         }
     }
 }
-
