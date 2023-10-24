@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
+//TEST: Pass in 5 4 2 1 as arguments from the CLI
+//Run with "dotnet run 5 4 2 1" in the directory of the source file
+
 namespace Easy01
 {
     class Program
