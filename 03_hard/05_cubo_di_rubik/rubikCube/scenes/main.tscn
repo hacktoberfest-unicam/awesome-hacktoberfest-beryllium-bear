@@ -1,0 +1,323 @@
+[gd_scene load_steps=14 format=3 uid="uid://cs7xrk28v8act"]
+
+[ext_resource type="Script" path="res://scenes/main.gd" id="1_lbbsj"]
+[ext_resource type="PackedScene" uid="uid://duux08b0j1brq" path="res://scenes/big_cube.tscn" id="2_vrqpa"]
+[ext_resource type="Script" path="res://scenes/orbiting_camera.gd" id="3_imujc"]
+[ext_resource type="Script" path="res://scenes/UI.gd" id="4_g6qdy"]
+[ext_resource type="Texture2D" uid="uid://dqoxntu2lo6y6" path="res://assets/mid-edge.png" id="6_rgmga"]
+[ext_resource type="Script" path="res://scenes/Support.gd" id="6_yx4e8"]
+[ext_resource type="Texture2D" uid="uid://bark3whhet5bm" path="res://assets/cross.png" id="7_cufek"]
+[ext_resource type="StyleBox" uid="uid://c8yjwixda7sfl" path="res://scenes/label.stylebox" id="7_fv5dd"]
+[ext_resource type="PackedScene" uid="uid://0djlny363s4d" path="res://scenes/sequence.tscn" id="7_kilku"]
+[ext_resource type="Texture2D" uid="uid://bwxs1ppsxt7hm" path="res://assets/top-edges.png" id="8_40gr6"]
+[ext_resource type="Texture2D" uid="uid://vtgsknbn1yy" path="res://assets/top-corners.png" id="9_sr31l"]
+[ext_resource type="Texture2D" uid="uid://b4e5cqklbbmvh" path="res://assets/top-corner.png" id="10_n0pko"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h34t6"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.141176, 0.141176, 0.141176, 1)
+
+[node name="Main" type="MarginContainer"]
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+script = ExtResource("1_lbbsj")
+
+[node name="C" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SVP" type="SubViewportContainer" parent="C"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="VP" type="SubViewport" parent="C/SVP"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(400, 400)
+render_target_update_mode = 4
+
+[node name="BigCube" parent="C/SVP/VP" instance=ExtResource("2_vrqpa")]
+
+[node name="Pivot" type="Marker3D" parent="C/SVP/VP/BigCube"]
+unique_name_in_owner = true
+rotation_edit_mode = 2
+script = ExtResource("3_imujc")
+
+[node name="Camera" type="Camera3D" parent="C/SVP/VP/BigCube/Pivot"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6)
+
+[node name="Light" type="DirectionalLight3D" parent="C/SVP/VP/BigCube/Pivot/Camera"]
+
+[node name="UI" type="VBoxContainer" parent="C"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 10
+script = ExtResource("4_g6qdy")
+
+[node name="Grid" type="GridContainer" parent="C/UI"]
+layout_mode = 2
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
+columns = 3
+
+[node name="Sp" type="Control" parent="C/UI/Grid"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="U" type="Button" parent="C/UI/Grid"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+button_mask = 7
+text = "U"
+
+[node name="Sp2" type="Control" parent="C/UI/Grid"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="L" type="Button" parent="C/UI/Grid"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 8
+button_mask = 7
+text = "L"
+
+[node name="F" type="Button" parent="C/UI/Grid"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+button_mask = 7
+text = "F"
+
+[node name="R" type="Button" parent="C/UI/Grid"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+button_mask = 7
+text = "R"
+
+[node name="Sp3" type="Control" parent="C/UI/Grid"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="D" type="Button" parent="C/UI/Grid"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+button_mask = 7
+text = "D"
+
+[node name="Sp4" type="Control" parent="C/UI/Grid"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Sp5" type="Control" parent="C/UI/Grid"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="B" type="Button" parent="C/UI/Grid"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+button_mask = 7
+text = "B
+"
+
+[node name="Reset" type="Button" parent="C/UI"]
+layout_mode = 2
+text = "Reset"
+
+[node name="Scramble" type="Button" parent="C/UI"]
+layout_mode = 2
+text = "Scramble"
+
+[node name="Solve" type="Button" parent="C/UI"]
+layout_mode = 2
+text = "Solve"
+
+[node name="Tools" type="HBoxContainer" parent="C/UI"]
+layout_mode = 2
+
+[node name="MidEdges" type="Button" parent="C/UI/Tools"]
+layout_mode = 2
+tooltip_text = "2nd layer edges"
+icon = ExtResource("6_rgmga")
+
+[node name="Cross" type="Button" parent="C/UI/Tools"]
+layout_mode = 2
+tooltip_text = "Yellow cross"
+icon = ExtResource("7_cufek")
+
+[node name="TopEdges" type="Button" parent="C/UI/Tools"]
+layout_mode = 2
+tooltip_text = "Top edges"
+icon = ExtResource("8_40gr6")
+
+[node name="TopCorners" type="Button" parent="C/UI/Tools"]
+layout_mode = 2
+tooltip_text = "Top corner positions"
+icon = ExtResource("9_sr31l")
+
+[node name="CornerSpin" type="Button" parent="C/UI/Tools"]
+layout_mode = 2
+tooltip_text = "Top corner orientation"
+icon = ExtResource("10_n0pko")
+
+[node name="Sequence" type="Button" parent="C/UI"]
+layout_mode = 2
+text = "Run Sequence"
+
+[node name="Help" type="Button" parent="C/UI"]
+layout_mode = 2
+text = "Help"
+
+[node name="HB" type="HBoxContainer" parent="C/UI"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SpeedSlider" type="HSlider" parent="C/UI/HB"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Rotation Speed"
+min_value = 1.0
+max_value = 9.0
+value = 1.0
+
+[node name="ColorPicker" type="ColorPickerButton" parent="C/UI/HB"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+color = Color(0, 0, 0, 0)
+edit_alpha = false
+
+[node name="Info" type="AcceptDialog" parent="."]
+title = "Instructions"
+size = Vector2i(552, 389)
+theme_override_styles/panel = SubResource("StyleBoxFlat_h34t6")
+dialog_text = "Color Map
+Click on source tile then destination tile to swap colors.
+Only valid moves are possible.
+
+Cube
+Use the mouse or arrow keys to rotate the cube.
+Ctrl + mouse button to zoom or ZX keys.
+
+Control Panel
+Click on face button to rotate face clockwise.
+Shift click or right mouse button for anti-clockwise rotation.
+Crtl click or middle mouse button to align the cube with face forward.
+Esc to quit."
+
+[node name="Support" type="PopupPanel" parent="."]
+title = "Extra Features"
+size = Vector2i(552, 300)
+theme_override_styles/panel = SubResource("StyleBoxFlat_h34t6")
+script = ExtResource("6_yx4e8")
+
+[node name="Text" type="RichTextLabel" parent="Support"]
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 547.0
+offset_bottom = 295.0
+bbcode_enabled = true
+text = "Support My Work
+
+If you liked this project, how about [url]Buying me a Coffee[/url]?
+
+Best regards,
+
+Andrew Wilkes"
+
+[node name="Overlay" type="CanvasLayer" parent="."]
+
+[node name="SUI" type="VBoxContainer" parent="Overlay"]
+unique_name_in_owner = true
+offset_right = 400.0
+offset_bottom = 123.0
+mouse_filter = 2
+
+[node name="Gap" type="Control" parent="Overlay/SUI"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="C" type="CenterContainer" parent="Overlay/SUI"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+
+[node name="Note" type="Label" parent="Overlay/SUI/C"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/normal = ExtResource("7_fv5dd")
+text = "Text"
+
+[node name="SP" type="Control" parent="Overlay/SUI"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="C2" type="CenterContainer" parent="Overlay/SUI"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+
+[node name="HB" type="HBoxContainer" parent="Overlay/SUI/C2"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Step" type="Button" parent="Overlay/SUI/C2/HB"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Step"
+
+[node name="Play" type="Button" parent="Overlay/SUI/C2/HB"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+text = "Play"
+
+[node name="Stop" type="Button" parent="Overlay/SUI/C2/HB"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Stop"
+
+[node name="CounterContainer" type="HBoxContainer" parent="Overlay"]
+unique_name_in_owner = true
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 654.0
+offset_bottom = 46.0
+theme_override_constants/separation = 10
+
+[node name="Sp1" type="Control" parent="Overlay/CounterContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Counter" type="Label" parent="Overlay/CounterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/normal = ExtResource("7_fv5dd")
+text = "Count 12"
+
+[node name="StopCounting" type="Button" parent="Overlay/CounterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Stop"
+
+[node name="Sp2" type="Control" parent="Overlay/CounterContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Sequence" parent="." instance=ExtResource("7_kilku")]
+visible = false
+
+[connection signal="value_changed" from="C/UI/HB/SpeedSlider" to="." method="_on_speed_slider_value_changed"]
+[connection signal="color_changed" from="C/UI/HB/ColorPicker" to="." method="_on_color_picker_color_changed"]
+[connection signal="meta_clicked" from="Support/Text" to="Support" method="_on_text_meta_clicked"]
+[connection signal="pressed" from="Overlay/SUI/C2/HB/Step" to="." method="_on_step_pressed"]
+[connection signal="pressed" from="Overlay/SUI/C2/HB/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="Overlay/SUI/C2/HB/Stop" to="." method="_on_stop_pressed"]
+[connection signal="pressed" from="Overlay/CounterContainer/StopCounting" to="." method="_on_stop_counting_pressed"]
