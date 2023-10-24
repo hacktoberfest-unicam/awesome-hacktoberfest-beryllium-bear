@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="3.0">
+    <attributes>
+        <attribute name="name" value=""/>
+        <attribute name="authors" value="Lorenzo"/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2023-10-24 12:37:59 "/>
+        <attribute name="created" value="TG9yZW56bztMQU5GQVJYLVNBUzsyMDIzLTEwLTI0OyIxMjoyODoxNiAiOzI3MzQ="/>
+        <attribute name="edited" value="TG9yZW56bztMQU5GQVJYLVNBUzsyMDIzLTEwLTI0OyIxMjozNzo1OSAiOzE7Mjg0OQ=="/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <comment text="- _**Multiplication Table**_: Define an algorithm that iteratively prints the Multiplication Table of 3 (from 1 to 10)."/>
+            <declare name="CurrentValue" type="Integer" array="False" size=""/>
+            <declare name="Multiplicator" type="Integer" array="False" size=""/>
+            <assign variable="Multiplicator" expression="3"/>
+            <declare name="i" type="Integer" array="False" size=""/>
+            <for variable="i" start="1" end="10" direction="inc" step="1">
+                <assign variable="CurrentValue" expression="Multiplicator*i"/>
+                <output expression="CurrentValue" newline="True"/>
+            </for>
+        </body>
+    </function>
+</flowgorithm>

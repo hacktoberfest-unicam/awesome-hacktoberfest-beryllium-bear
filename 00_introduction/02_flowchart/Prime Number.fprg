@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="3.0">
+    <attributes>
+        <attribute name="name" value=""/>
+        <attribute name="authors" value="Lorenzo"/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2023-10-24 03:22:51 "/>
+        <attribute name="created" value="TG9yZW56bztMQU5GQVJYLVNBUzsyMDIzLTEwLTI0OyIwMzowMToyNCAiOzI3MjQ="/>
+        <attribute name="edited" value="TG9yZW56bztMQU5GQVJYLVNBUzsyMDIzLTEwLTI0OyIwMzowMToyNyAiOzE7TG9yZW56bztMQU5GQVJYLVNBUzsyMDIzLTEwLTI0OyIxMjozODoxMCAiO1ByaW1lIE51bWJlci5mcHJnOzczMTc="/>
+        <attribute name="edited" value="TG9yZW56bztMQU5GQVJYLVNBUzsyMDIzLTEwLTI0OyIwMzoyMjo1MSAiOzE7MjgzNQ=="/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <comment text="- _**Prime Number**_: Define an algorithm that will iteratively list all the prime numbers between 2 and 100 (both included)."/>
+            <declare name="i" type="Integer" array="False" size=""/>
+            <declare name="flag" type="Boolean" array="False" size=""/>
+            <assign variable="flag" expression="true"/>
+            <declare name="n" type="Integer" array="False" size=""/>
+            <for variable="n" start="2" end="100" direction="inc" step="1">
+                <for variable="i" start="2" end="n/2+1" direction="inc" step="1">
+                    <if expression="n%i==0">
+                        <then>
+                            <assign variable="flag" expression="false"/>
+                        </then>
+                        <else/>
+                    </if>
+                    <if expression="flag">
+                        <then>
+                            <output expression="n" newline="True"/>
+                        </then>
+                        <else/>
+                    </if>
+                </for>
+            </for>
+        </body>
+    </function>
+</flowgorithm>

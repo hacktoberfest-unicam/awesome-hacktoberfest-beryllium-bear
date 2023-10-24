@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="3.0">
+    <attributes>
+        <attribute name="name" value=""/>
+        <attribute name="authors" value="Lorenzo"/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2023-10-24 12:27:25 "/>
+        <attribute name="created" value="TG9yZW56bztMQU5GQVJYLVNBUzsyMDIzLTEwLTI0OyIxMjoxNjoyMSAiOzI3Mjc="/>
+        <attribute name="edited" value="TG9yZW56bztMQU5GQVJYLVNBUzsyMDIzLTEwLTI0OyIxMjoyNzoyNSAiOzI7Mjg0Mg=="/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <comment text="- _**Discount Algorithm**_: Define an algorithm that given a product price, applies a 20% discount if the price is greater than 50&#8364;, otherwise the discount will be 10%. Finally, visualise the discounted price."/>
+            <declare name="ProductPrice" type="Integer" array="False" size=""/>
+            <input variable="ProductPrice"/>
+            <if expression="ProductPrice &gt; 50.0">
+                <then>
+                    <assign variable="ProductPrice" expression="ProductPrice-(ProductPrice*20/100)"/>
+                </then>
+                <else>
+                    <assign variable="ProductPrice" expression="ProductPrice-(ProductPrice*10/100)"/>
+                </else>
+            </if>
+            <output expression="ProductPrice" newline="True"/>
+        </body>
+    </function>
+</flowgorithm>
