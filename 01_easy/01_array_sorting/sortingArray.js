@@ -1,5 +1,5 @@
 numeri = new Array();
-numeri = [ 0, 2, 5, 8, 3, 1, 10, 89, 56, 34];
+numeri = [ 0, 2, 5, 8, 3, 1, 10, 89, 56, 34, 475308];
 var temp = 0;
 for (i=0; i<numeri.length; i++) {
     if (numeri[i-1] > numeri[i]) {
