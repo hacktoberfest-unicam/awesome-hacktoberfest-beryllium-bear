@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="3.0">
+    <attributes>
+        <attribute name="name" value=""/>
+        <attribute name="authors" value="Marvin"/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2023-10-24 12:34:06 "/>
+        <attribute name="created" value="TWFydmluO0RFU0tUT1AtNzBONjk1NTsyMDIzLTEwLTI0OyIxMjoxMjowMiAiOzI3Nzk="/>
+        <attribute name="edited" value="TWFydmluO0RFU0tUT1AtNzBONjk1NTsyMDIzLTEwLTI0OyIxMjozNDowNiAiOzE7Mjg5NQ=="/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <declare name="counter" type="Integer" array="False" size=""/>
+            <declare name="risultato" type="Integer" array="False" size=""/>
+            <for variable="counter" start="1" end="10" direction="inc" step="1">
+                <assign variable="risultato" expression="counter * 3"/>
+                <output expression="risultato" newline="True"/>
+            </for>
+        </body>
+    </function>
+</flowgorithm>
