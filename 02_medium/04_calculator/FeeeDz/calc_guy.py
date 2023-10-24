@@ -1,3 +1,4 @@
+#FeeeDz
 import tkinter as tk
 
 def calculate():
