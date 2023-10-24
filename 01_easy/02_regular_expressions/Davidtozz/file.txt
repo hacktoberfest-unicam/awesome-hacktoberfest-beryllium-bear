@@ -1,4 +1,0 @@
-Apple/ABCD Banana/EFGH
-Cat/IJKL Dog/MNOPQ
-Elephant/RSTU
-Fish/VWXYZ
