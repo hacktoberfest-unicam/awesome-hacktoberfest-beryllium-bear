@@ -1,0 +1,2 @@
+Sturttura a catena e blocchi in C#. L'utente puo' creare una catena e aggiungerle i blocchi autonomamente o aggiungerli direttamente come stringhe.
+Ogni blocco ricorda l'hash del precedente ed e' in grado di riconoscere l'hash giusto.
