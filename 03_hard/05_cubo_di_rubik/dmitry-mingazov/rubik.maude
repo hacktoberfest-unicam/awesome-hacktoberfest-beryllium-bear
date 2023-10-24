@@ -1,0 +1,460 @@
+--- The following software is written in Maude (http://maude.cs.illinois.edu/w/index.php/The_Maude_System)
+--- In order to use it please download Maude3.3.1 from the following url (https://github.com/SRI-CSL/Maude/releases/tag/Maude3.3.1)
+
+--- To change the initial state of the rubik cube, please modifiy the equation "eq scrambleState = ..." with
+--- the wanted state. Each face is described with its colors, from top to bottom and from left to right. The colors are:
+--- W - White
+--- Y - Yellow
+--- R - Red
+--- O - Orange
+--- B - Blue
+--- G - Green
+
+--- HOW TO RUN IT
+--- Run maude.linux64
+--- inside the Maude CLI, load this file using 'load ./rubik.maude'
+--- The algorithm must be performed in 3 steps:
+--- write the following inside the CLI
+--- 1) "search [1] in RUBIK-WC : scrambleState =>* S such that isWhiteCrossState(S) ." 
+--- 2) "search [1] in RUBIK-ALG: ---INSERT THE OUTPUT OF STEP 1 HERE--- =>* S such that isWhiteFaceState(S) ." 
+--- 3) "search [1] in RUBIK-ALG: ---INSERT THE OUTPUT OF STEP 2 HERE--- =>* S such that isSolved(S) ." 
+
+--- to check how the algorithm solved the cube, write in the CLI "show path INSERT_STATE_NUMBER ."
+
+--- ...this PR is obviously a meme, this code was used for an exam @ Unicam. Here the source repo (https://github.com/dmitry-mingazov/rubik-solver)
+--- nevertheless, it would be fun to see this absurd piece of software inside the hackathon repository
+
+fmod RUBIK-OP is
+	sort Face .
+	sort Color .
+	sort State .
+	
+	op front(_ _ _ _ _ _ _ _ _) : Color Color Color Color Color Color Color Color Color -> Face [ctor] .
+	op back(_ _ _ _ _ _ _ _ _) : Color Color Color Color Color Color Color Color Color -> Face [ctor] .
+	op left(_ _ _ _ _ _ _ _ _) : Color Color Color Color Color Color Color Color Color -> Face [ctor] .
+	op right(_ _ _ _ _ _ _ _ _) : Color Color Color Color Color Color Color Color Color -> Face [ctor] .
+	op up(_ _ _ _ _ _ _ _ _) : Color Color Color Color Color Color Color Color Color -> Face [ctor] .
+	op down(_ _ _ _ _ _ _ _ _) : Color Color Color Color Color Color Color Color Color -> Face [ctor] .
+	
+	op s(_ _ _ _ _ _) : Face Face Face Face Face Face -> State [ctor] .
+
+	ops W Y R O B G : -> Color [ctor] .
+
+	op solvedState : -> State [ctor] .
+	eq solvedState = s(left(R R R R R R R R R) front(G G G G G G G G G) right(O O O O O O O O O) back(B B B B B B B B B) up(Y Y Y Y Y Y Y Y Y) down(W W W W W W W W W)) .
+
+	--- op scrambleState : -> State [ctor] .
+	--- eq scrambleState = s(left(G W G Y O O G G W) front(O Y B G Y W O O R) right(R R W R R R Y G Y) back(R B O Y W O B G R) up(W W B O G B Y B Y) down(B B G Y B W W R O)) .
+
+	op scrambleState : -> State [ctor] .
+	eq scrambleState = s(left(R O W W O W Y O O) front(G R G R G B Y B B) right(W Y R R R O W Y O) back(B Y B B B G G Y R) up(Y O W W W R R G O) down(B W O G Y B G G Y)) .
+
+	op finalState : -> State [ctor] . 
+	eq finalState = s(left(R O R R R R R R R) front(G R G G G G G G G) right(O G O O O O O O O) back(B B B B B B B B B) up(Y Y Y Y Y Y Y Y Y) down(W W W W W W W W W)) .
+
+--- YellowFace example state
+	op exState1 : -> State [ctor] . 
+	eq exState1 = s(left(O R R R R R R R R) front(G G O G G G G G G) right(B O B O O O O O O) back(R B G B B B B B B) up(Y Y Y Y Y Y Y Y Y) down(W W W W W W W W W)) .
+--- YellowCross example state
+	op exState2 : -> State [ctor] . 
+	eq exState2 = s(left(G O G R R R R R R) front(Y B B G G G G G G) right(Y R Y O O O O O O) back(B G Y B B B B B B) up(O Y R Y Y Y R Y O) down(W W W W W W W W W)) .
+--- SecondLayer example state
+	op exState3 : -> State [ctor] .
+	eq exState3 = s(left(B R R R R R R R R) front(Y Y O G G G G G G) right(Y G G O O O O O O) back(Y Y O B B B B B B) up(Y O R Y Y Y B B G) down(W W W W W W W W W)) .
+--- FirstLayer example state
+	op exState4 : -> State [ctor] .
+	eq exState4 = s(left(B G G O R Y R R R) front(Y B R B G B G G G) right(Y Y O R O O O O O) back(Y R O G B Y B B B) up(Y Y G R Y G R O B) down(W W W W W W W W W)) .
+--- FirstLayer example state 2
+	op exState5 : -> State [ctor] .
+	eq exState5 = s(left(R G O O R O R R R) front(B Y O B G Y G G G) right(Y Y Y O O G O O O) back(R B B R B G B B B) up(Y R G Y Y B Y R G) down(W W W W W W W W W)) .
+--- FirstLayer isFrontRightSolvable = true
+	op exFrontRightSolvable : -> State [ctor] .
+	eq exFrontRightSolvable = s(left(G R R B R R R R R) front(Y G Y G G Y G G G) right(O Y G O O G O O O) back(Y B Y Y B O B B B) up(O R R Y Y B B O B) down(W W W W W W W W W)) .
+--- WhiteCross Aligned ex
+	op exWC : -> State [ctor] .
+	eq exWC = s(left(W O B O O R Y G Y) front(O G Y G G B O R W) right(B R G R R Y B Y W) back(Y B G G B B R Y O) up(O W R W W W W W R) down(G Y R O Y O B B G)) .
+--- White cross to align by right ex
+	op exWCBR : -> State [ctor] .
+	eq exWCBR = s(left(G B G R B Y W Y R) front(W O Y R O G B B Y) right(G R G R G O O O B) back(Y G W B R B O G R) up(R W R W W W O W O) down(Y Y B O Y G B Y Y)) .
+--- White cross to align by left ex
+	op exWCBL : -> State [ctor] .
+	eq exWCBL = s(left(G O W R G O O O B) front(O R G B R B O G R) right(O B Y R B Y W Y R) back(R G W R O G B B W) up(R W G W W W G W Y) down(Y Y B G Y O B Y Y)) .
+
+
+
+	vars F1 F2 F3 F4 F5 F6 F7 F8 F9 : Color .
+	vars B1 B2 B3 B4 B5 B6 B7 B8 B9 : Color .
+	vars L1 L2 L3 L4 L5 L6 L7 L8 L9 : Color .
+	vars R1 R2 R3 R4 R5 R6 R7 R8 R9 : Color .
+	vars U1 U2 U3 U4 U5 U6 U7 U8 U9 : Color .
+	vars D1 D2 D3 D4 D5 D6 D7 D8 D9 : Color .
+
+	op F : State -> State [iter] .
+	eq F(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = 
+	     s(left(L1 L2 D1 L4 L5 D2 L7 L8 D3) front(F7 F4 F1 F8 F5 F2 F9 F6 F3) right(U7 R2 R3 U8 R5 R6 U9 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 L9 L6 L3) down(R7 R4 R1 D4 D5 D6 D7 D8 D9)) .
+
+	op Fi : State -> State [iter] .
+	eq Fi(s(left(L1 L2 D1 L4 L5 D2 L7 L8 D3) front(F7 F4 F1 F8 F5 F2 F9 F6 F3) right(U7 R2 R3 U8 R5 R6 U9 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 L9 L6 L3) down(R7 R4 R1 D4 D5 D6 D7 D8 D9))) =
+          s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9)) .
+
+	op R : State -> State [iter] .
+	eq R(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) =
+		 s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 D3 F4 F5 D6 F7 F8 D9) right(R7 R4 R1 R8 R5 R2 R9 R6 R3) back(U9 B2 B3 U6 B5 B6 U3 B8 B9) up(U1 U2 F3 U4 U5 F6 U7 U8 F9) down(D1 D2 B7 D4 D5 B4 D7 D8 B1)) .
+
+	op Ri : State -> State [iter] .
+	eq Ri(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 D3 F4 F5 D6 F7 F8 D9) right(R7 R4 R1 R8 R5 R2 R9 R6 R3) back(U9 B2 B3 U6 B5 B6 U3 B8 B9) up(U1 U2 F3 U4 U5 F6 U7 U8 F9) down(D1 D2 B7 D4 D5 B4 D7 D8 B1))) = 
+	     s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9)) . 
+
+	op U : State -> State [iter] .
+	eq U(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) =
+		 s(left(F1 F2 F3 L4 L5 L6 L7 L8 L9) front(R1 R2 R3 F4 F5 F6 F7 F8 F9) right(B1 B2 B3 R4 R5 R6 R7 R8 R9) back(L1 L2 L3 B4 B5 B6 B7 B8 B9) up(U7 U4 U1 U8 U5 U2 U9 U6 U3) down(D1 D2 D3 D4 D5 D6 D7 D8 D9)) . 
+
+	op Ui : State -> State [iter] .
+	eq Ui(s(left(F1 F2 F3 L4 L5 L6 L7 L8 L9) front(R1 R2 R3 F4 F5 F6 F7 F8 F9) right(B1 B2 B3 R4 R5 R6 R7 R8 R9) back(L1 L2 L3 B4 B5 B6 B7 B8 B9) up(U7 U4 U1 U8 U5 U2 U9 U6 U3) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) =
+		 s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9)) . 
+
+	op B : State -> State [iter] .
+	eq B(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) =
+		 s(left(U3 L2 L3 U2 L5 L6 U1 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 D9 R4 R5 D8 R7 R8 D7) back(B7 B4 B1 B8 B5 B2 B9 B6 B3) up(R3 R6 R9 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 L1 L4 L7)) . 
+
+	op Bi : State -> State [iter] .
+	eq Bi(s(left(U3 L2 L3 U2 L5 L6 U1 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 D9 R4 R5 D8 R7 R8 D7) back(B7 B4 B1 B8 B5 B2 B9 B6 B3) up(R3 R6 R9 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 L1 L4 L7))) =
+		  s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9)) . 
+
+	op L : State -> State [iter] .
+	eq L(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) =
+		 s(left(L7 L4 L1 L8 L5 L2 L9 L6 L3) front(U1 F2 F3 U4 F5 F6 U7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 D7 B4 B5 D4 B7 B8 D1) up(B9 U2 U3 B6 U5 U6 B3 U8 U9) down(F1 D2 D3 F4 D5 D6 F7 D8 D9)) . 
+
+	op Li : State -> State [iter] .
+	eq Li(s(left(L7 L4 L1 L8 L5 L2 L9 L6 L3) front(U1 F2 F3 U4 F5 F6 U7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 D7 B4 B5 D4 B7 B8 D1) up(B9 U2 U3 B6 U5 U6 B3 U8 U9) down(F1 D2 D3 F4 D5 D6 F7 D8 D9))) =
+		  s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9)) .
+
+	op D : State -> State [iter] .
+	eq D(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) =
+		 s(left(L1 L2 L3 L4 L5 L6 B7 B8 B9) front(F1 F2 F3 F4 F5 F6 L7 L8 L9) right(R1 R2 R3 R4 R5 R6 F7 F8 F9) back(B1 B2 B3 B4 B5 B6 R7 R8 R9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D7 D4 D1 D8 D5 D2 D9 D6 D3)) .
+
+	op Di : State -> State [iter] .
+	eq Di(s(left(L1 L2 L3 L4 L5 L6 B7 B8 B9) front(F1 F2 F3 F4 F5 F6 L7 L8 L9) right(R1 R2 R3 R4 R5 R6 F7 F8 F9) back(B1 B2 B3 B4 B5 B6 R7 R8 R9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D7 D4 D1 D8 D5 D2 D9 D6 D3))) = 
+		  s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9)) . 
+
+	op yawCW : State -> State .
+	eq yawCW(s(left(B1 B2 B3 B4 B5 B6 B7 B8 B9) front(L1 L2 L3 L4 L5 L6 L7 L8 L9) right(F1 F2 F3 F4 F5 F6 F7 F8 F9) back(R1 R2 R3 R4 R5 R6 R7 R8 R9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) =
+			 s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U7 U4 U1 U8 U5 U2 U9 U6 U3) down(D3 D6 D9 D2 D5 D8 D1 D4 D7)) . 
+
+	op yawCCW : State -> State . 
+	eq yawCCW(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U7 U4 U1 U8 U5 U2 U9 U6 U3) down(D7 D4 D1 D8 D5 D2 D9 D6 D3))) = 
+		      s(left(B1 B2 B3 B4 B5 B6 B7 B8 B9) front(L1 L2 L3 L4 L5 L6 L7 L8 L9) right(F1 F2 F3 F4 F5 F6 F7 F8 F9) back(R1 R2 R3 R4 R5 R6 R7 R8 R9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9)) .
+
+	op roll : State -> State .
+	eq roll(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = 
+			s(left(L3 L6 L9 L2 L5 L8 L1 L4 L7) front(D1 D2 D3 D4 D5 D6 D7 D8 D9) right(R7 R4 R1 R8 R5 R2 R9 R6 R3) back(U9 U8 U7 U6 U5 U4 U3 U2 U1) up(F1 F2 F3 F4 F5 F6 F7 F8 F9) down(B9 B8 B7 B6 B5 B4 B3 B2 B1)) .
+
+	var S : State .
+	vars L0 F0 R0 B0 U0 D0 : Color .
+	op isFinalState : State -> Bool .
+	eq isFinalState(s(left(L0 R1 L0 L0 L0 L0 L0 L0 L0) front(F0 L1 F0 F0 F0 F0 F0 F0 F0) right(R0 F1 R0 R0 R0 R0 R0 R0 R0) back(B0 B0 B0 B0 B0 B0 B0 B0 B0) up(U0 U0 U0 U0 U0 U0 U0 U0 U0) down(D0 D0 D0 D0 D0 D0 D0 D0 D0))) = true .
+	eq isFinalState(s(left(L0 R1 L0 L0 L0 L0 L0 L0 L0) front(F0 L1 F0 F0 F0 F0 F0 F0 F0) right(R0 F1 R0 R0 R0 R0 R0 R0 R0) back(B0 B1 B0 B0 B0 B0 B0 B0 B0) up(U0 U0 U0 U0 U0 U0 U0 U0 U0) down(D0 D0 D0 D0 D0 D0 D0 D0 D0))) = true .
+	eq isFinalState(S) = false [owise] .
+
+	op isReallyFinalState : State -> Bool .
+	ceq isReallyFinalState(S) = true if isFinalState(S) == true or isFinalState(yawCW(S)) == true or isFinalState(yawCW(yawCW((S)))) == true or isFinalState(yawCW(yawCW(yawCW(S)))) == true .
+	eq isReallyFinalState(S) = false [owise] .
+
+	op isYellowFaceState : State -> Bool .
+	eq isYellowFaceState(s(left(L1 L2 L3 L0 L0 L0 L0 L0 L0) front(F1 F2 F3 F0 F0 F0 F0 F0 F0) right(R1 R2 R3 R0 R0 R0 R0 R0 R0) back(B1 B2 B3 B0 B0 B0 B0 B0 B0) up(U0 U0 U0 U0 U0 U0 U0 U0 U0) down(D0 D0 D0 D0 D0 D0 D0 D0 D0))) = true .
+	eq isYellowFaceState(S) = false [owise] .
+
+	op isOnlyYellowFaceState : State -> Bool .
+	ceq isOnlyYellowFaceState(S) = true if isYellowFaceState(S) and not(isReallyFinalState(S)) .
+	eq isOnlyYellowFaceState(S) = false [owise] .
+
+	op isYellowCrossState : State -> Bool .
+	eq isYellowCrossState(s(left(L1 L2 L3 L0 L0 L0 L0 L0 L0) front(F1 F2 F3 F0 F0 F0 F0 F0 F0) right(R1 R2 R3 R0 R0 R0 R0 R0 R0) back(B1 B2 B3 B0 B0 B0 B0 B0 B0) up(U1 U0 U3 U0 U0 U0 U7 U0 U9) down(D0 D0 D0 D0 D0 D0 D0 D0 D0))) = true .
+	eq isYellowCrossState(S) = false [owise] .
+
+	op isOnlyYellowCrossState : State -> Bool .
+	ceq isOnlyYellowCrossState(S) = true if isYellowCrossState(S) and not(isOnlyYellowFaceState(S)) .
+	eq isOnlyYellowCrossState(S) = false [owise] .
+
+	op isSecondLayerState : State -> Bool .
+	eq isSecondLayerState(s(left(L1 L2 L3 L0 L0 L0 L0 L0 L0) front(F1 F2 F3 F0 F0 F0 F0 F0 F0) right(R1 R2 R3 R0 R0 R0 R0 R0 R0) back(B1 B2 B3 B0 B0 B0 B0 B0 B0) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D0 D0 D0 D0 D0 D0 D0 D0 D0))) = true .
+	eq isSecondLayerState(S) = false [owise] .
+
+	op isOnlySecondLayerState : State -> Bool .
+	ceq isOnlySecondLayerState(S) = true if isSecondLayerState(S) and not(isOnlyYellowCrossState(S)) .
+	eq isOnlySecondLayerState(S) = false [owise] .
+
+	op isFirstLayerState : State -> Bool .
+	eq isFirstLayerState(s(left(L1 L2 L3 L4 L0 L6 L0 L0 L0) front(F1 F2 F3 F4 F0 F6 F0 F0 F0) right(R1 R2 R3 R4 R0 R6 R0 R0 R0) back(B1 B2 B3 B4 B0 B6 B0 B0 B0) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D0 D0 D0 D0 D0 D0 D0 D0 D0))) = true .
+	eq isFirstLayerState(S) = false [owise] .
+
+	op isOnlyFirstLayerState : State -> Bool .
+	ceq isOnlyFirstLayerState(S) = true if isFirstLayerState(S) and not(isOnlySecondLayerState(S)) .
+	eq isOnlyFirstLayerState(S) = false [owise] .
+
+	op isFrontResolvable : State -> Bool .
+	ceq isFrontResolvable(s(left(L1 L2 L3 L4 L0 L6 L0 L0 L0) front(F1 F2 F3 F4 F0 F6 F0 F0 F0) right(R1 R2 R3 R4 R0 R6 R0 R0 R0) back(B1 B2 B3 B4 B0 B6 B0 B0 B0) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D0 D0 D0 D0 D0 D0 D0 D0 D0))) = true if (R2 == F0 and (U6 == R0 or U6 == L0)) or (B2 == F0 and (U2 == R0 or U2 == L0)) or (L2 == F0 and (U4 == R0 or U4 == L0)) .
+	eq isFrontResolvable(S) = false [owise] .
+
+	op isFrontRightMissplaced : State -> Bool .
+	ceq isFrontRightMissplaced(s(left(L1 L2 L3 L4 L0 L6 L0 L0 L0) front(F1 F2 F3 F4 F0 F6 F0 F0 F0) right(R1 R2 R3 R4 R0 R6 R0 R0 R0) back(B1 B2 B3 B4 B0 B6 B0 B0 B0) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D0 D0 D0 D0 D0 D0 D0 D0 D0))) = true if (F6 =/= U5 and R4 =/= U5) and (F2 == U5 or U8 == U5) and (F6 =/= F0 and R4 =/= L0) .
+	eq isFrontRightMissplaced(S) = false [owise] .
+
+	op isFrontLeftMissplaced : State -> Bool .
+	ceq isFrontLeftMissplaced(s(left(L1 L2 L3 L4 L0 L6 L0 L0 L0) front(F1 F2 F3 F4 F0 F6 F0 F0 F0) right(R1 R2 R3 R4 R0 R6 R0 R0 R0) back(B1 B2 B3 B4 B0 B6 B0 B0 B0) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D0 D0 D0 D0 D0 D0 D0 D0 D0))) = true if (F4 =/= U5 and L6 =/= U5) and (F2 == U5 or U8 == U5) and (F4 =/= F0 and L6 =/= L0) .
+	eq isFrontLeftMissplaced(S) = false [owise] .
+
+	op isFrontRightResolvable : State -> Bool .
+	ceq isFrontRightResolvable(s(left(L1 L2 L3 L4 L0 L6 L0 L0 L0) front(F1 F2 F3 F4 F0 F6 F0 F0 F0) right(R1 R2 R3 R4 R0 R6 R0 R0 R0) back(B1 B2 B3 B4 B0 B6 B0 B0 B0) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D0 D0 D0 D0 D0 D0 D0 D0 D0))) = true if F2 == F0 and U8 == R0 .
+	eq isFrontRightResolvable(S) = false [owise] .
+
+	op isFrontLeftResolvable : State -> Bool .
+	ceq isFrontLeftResolvable(s(left(L1 L2 L3 L4 L0 L6 L0 L0 L0) front(F1 F2 F3 F4 F0 F6 F0 F0 F0) right(R1 R2 R3 R4 R0 R6 R0 R0 R0) back(B1 B2 B3 B4 B0 B6 B0 B0 B0) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D0 D0 D0 D0 D0 D0 D0 D0 D0))) = true if F2 == F0 and U8 == L0 .
+	eq isFrontLeftResolvable(S) = false [owise] .
+
+	op isFrontSolved : State -> Bool .
+	eq isFrontSolved(s(left(L1 L2 L3 L4 L0 L0 L0 L0 L0) front(F1 F2 F3 F0 F0 F0 F0 F0 F0) right(R1 R2 R3 R0 R0 R6 R0 R0 R0) back(B1 B2 B3 B4 B0 B6 B0 B0 B0) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D0 D0 D0 D0 D0 D0 D0 D0 D0))) = true .
+	eq isFrontSolved(S) = false [owise] .
+
+	op isOnlyFrontSolved : State -> Bool .
+	ceq isOnlyFrontSolved(S) = true if isFrontSolved(S) and isOnlyFirstLayerState(S) .
+	eq isOnlyFrontSolved(S) = false [owise] .
+
+	op isOnlyFrontResolvable : State -> Bool .
+	ceq isOnlyFrontResolvable(S) = true if isFrontResolvable(S) and isOnlyFirstLayerState(S) .
+	eq isOnlyFrontResolvable(S) = false [owise] .
+
+	op mustRotate : State -> Bool .
+	ceq mustRotate(S) = true if not(isFrontLeftMissplaced(S)) and not(isFrontRightMissplaced(S)) and not(isFrontRightResolvable(S)) and not(isFrontLeftResolvable(S)) and not(isOnlyFrontResolvable(S)) and isFirstLayerState(S) .
+	eq mustRotate(S) = false [owise] .
+
+	op isWhiteCrossState : State -> Bool .
+	eq isWhiteCrossState(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U0 U3 U0 U0 U0 U7 U0 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq isWhiteCrossState(S) = false [owise] .
+
+	op hasUpperWhiteEdge : State -> Bool .
+	eq hasUpperWhiteEdge(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U0 U6 U7 U0 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq hasUpperWhiteEdge(S) = false [owise] .
+
+	op hasWhiteEdgeInLeft : State -> Bool .
+	eq hasWhiteEdgeInLeft(s(left(L1 L2 L3 L4 L5 U5 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq hasWhiteEdgeInLeft(S) = false [owise] .
+
+	op hasWhiteEdgeInRight : State -> Bool .
+	eq hasWhiteEdgeInRight(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 U5 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq hasWhiteEdgeInRight(S) = false [owise] .
+
+	op hasWhiteEdgeInDown : State -> Bool .
+	eq hasWhiteEdgeInDown(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 U5 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq hasWhiteEdgeInDown(S) = false [owise] .
+
+	op hasWhiteEdgeInFrontUp : State -> Bool .
+	eq hasWhiteEdgeInFrontUp(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 U5 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq hasWhiteEdgeInFrontUp(S) = false [owise] .
+	
+	op hasWhiteEdgeInFrontBottom : State -> Bool .
+	eq hasWhiteEdgeInFrontBottom(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 U5 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U2 U3 U4 U5 U6 U7 U8 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq hasWhiteEdgeInFrontBottom(S) = false [owise] .
+
+	op hasFrontWhiteEdge : State -> Bool .
+	ceq hasFrontWhiteEdge(S) = true if hasWhiteEdgeInLeft(S) or hasWhiteEdgeInRight(S) or hasWhiteEdgeInDown(S) or hasWhiteEdgeInFrontUp(S) or hasWhiteEdgeInFrontBottom(S) .
+	eq hasFrontWhiteEdge(S) = false [owise] .
+
+	op isWhiteCrossAlignedState : State -> Bool .
+	eq isWhiteCrossAlignedState(s(left(L1 L0 L3 L4 L0 L6 L7 L8 L9) front(F1 F0 F3 F4 F0 F6 F7 F8 F9) right(R1 R0 R3 R4 R0 R6 R7 R8 R9) back(B1 B0 B3 B4 B0 B6 B7 B8 B9) up(U1 U0 U3 U0 U0 U0 U7 U0 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq isWhiteCrossAlignedState(S) = false [owise] .
+
+	op isFrontEdgeAlignedState : State -> Bool .
+	eq isFrontEdgeAlignedState(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F0 F3 F4 F0 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U0 U3 U0 U0 U0 U7 U0 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq isFrontEdgeAlignedState(S) = false [owise] .
+
+	op isAlignableByInverseFinalMove : State -> Bool .
+	eq isAlignableByInverseFinalMove(s(left(L1 B5 L3 L4 L5 L6 L7 L8 L9) front(F1 F0 F3 F4 F0 F6 F7 F8 F9) right(R1 L5 R3 R4 R5 R6 R7 R8 R9) back(B1 R5 B3 B4 B5 B6 B7 B8 B9) up(U1 U0 U3 U0 U0 U0 U7 U0 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq isAlignableByInverseFinalMove(S) = false [owise] .
+
+	op isAlignableByFinalMove : State -> Bool .
+	eq isAlignableByFinalMove(s(left(L1 R5 L3 L4 L5 L6 L7 L8 L9) front(F1 F0 F3 F4 F0 F6 F7 F8 F9) right(R1 B5 R3 R4 R5 R6 R7 R8 R9) back(B1 L5 B3 B4 B5 B6 B7 B8 B9) up(U1 U0 U3 U0 U0 U0 U7 U0 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq isAlignableByFinalMove(S) = false [owise] .
+
+	op isAlignableByLeft : State -> Bool .
+	eq isAlignableByLeft(s(left(L1 B5 L3 L4 L5 L6 L7 L8 L9) front(F1 F0 F3 F4 F0 F6 F7 F8 F9) right(R1 R0 R3 R4 R0 R6 R7 R8 R9) back(B1 L5 B3 B4 B5 B6 B7 B8 B9) up(U1 U0 U3 U0 U0 U0 U7 U0 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq isAlignableByLeft(S) = false [owise] .
+
+	op isAlignableByRight : State -> Bool .
+	eq isAlignableByRight(s(left(L1 L0 L3 L4 L0 L6 L7 L8 L9) front(F1 F0 F3 F4 F0 F6 F7 F8 F9) right(R1 B5 R3 R4 R5 R6 R7 R8 R9) back(B1 R5 B3 B4 B5 B6 B7 B8 B9) up(U1 U0 U3 U0 U0 U0 U7 U0 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq isAlignableByRight(S) = false [owise] .
+
+	op isAlignableBySwap : State -> Bool .
+	eq isAlignableByLeft(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U0 U3 U0 U0 U0 U7 U0 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq isAlignableBySwap(S) = false [owise] .
+
+	op isOnlyWhiteCrossAlignedState : State -> Bool .
+	ceq isOnlyWhiteCrossAlignedState(S) = true if isWhiteCrossAlignedState(S) and not(isOnlyWhiteFaceState(S)) .
+	eq isOnlyWhiteCrossAlignedState(S) = false [owise] .
+
+	op isOnlyWhiteCrossState : State -> Bool .
+	ceq isOnlyWhiteCrossState(S) = true if isWhiteCrossState(S) and not(isOnlyWhiteCrossAlignedState(S)) .
+	eq isOnlyWhiteCrossState(S) = false [owise] .
+
+	op isOnlyWhiteDotState : State -> Bool .
+	ceq isOnlyWhiteDotState(S) = true if not(isWhiteCrossState(S)) and not(isFirstLayerState(S)) .
+	eq isOnlyWhiteDotState(S) = false [owise] .
+
+	op isLowerRightWhiteCornerFront : State -> Bool .
+	ceq isLowerRightWhiteCornerFront(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U0 U3 U0 U0 U0 U7 U0 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true if F9 == U0 and R7 == R2 and D3 == F2 .
+	eq isLowerRightWhiteCornerFront(S) = false [owise] .
+
+	op isLowerRightWhiteCornerRight : State -> Bool .
+	ceq isLowerRightWhiteCornerRight(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U0 U3 U0 U0 U0 U7 U0 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true if R7 == U0 and F9 == F2 and D3 == R2 .
+	eq isLowerRightWhiteCornerRight(S) = false [owise] .
+
+	op isLowerRightWhiteCornerDown : State -> Bool .
+	ceq isLowerRightWhiteCornerDown(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U0 U3 U0 U0 U0 U7 U0 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true if D3 == U0 and F9 == R2 and R7 == F2 .
+	eq isLowerRightWhiteCornerDown(S) = false [owise] .
+
+	op isUpperRightWhiteCornerResolvable : State -> Bool .
+	ceq isUpperRightWhiteCornerResolvable(S) = true if isLowerRightWhiteCornerRight(S) or isLowerRightWhiteCornerFront(S) or isLowerRightWhiteCornerDown(S) .
+	eq isUpperRightWhiteCornerResolvable(S) = false [owise] .
+
+	op isUpperRightWhiteCornerReallyResolvable : State -> Bool .
+	ceq isUpperRightWhiteCornerReallyResolvable(S) = true if isUpperRightWhiteCornerResolvable(D(S)) or isUpperRightWhiteCornerResolvable(D(D(S))) or isUpperRightWhiteCornerResolvable(Di(S)) .
+	eq isUpperRightWhiteCornerReallyResolvable(S) = false [owise] .
+
+	op isUpperRightCornerSolved : State -> Bool .
+	eq isUpperRightCornerSolved(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F0 F0 F4 F5 F6 F7 F8 F9) right(R0 R0 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U0 U3 U0 U0 U0 U7 U0 U0) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq isUpperRightCornerSolved(S) = false [owise] .
+
+	op hasUpperRightCornerWhite : State -> Bool .
+	ceq hasUpperRightCornerWhite(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U0 U3 U0 U0 U0 U7 U0 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true if (F3 == U0 or R1 == U0 or U9 == U0) .
+	eq hasUpperRightCornerWhite(S) = false [owise] .
+
+	op isUpperRightCornerWrongWhite : State -> Bool .
+	ceq isUpperRightCornerWrongWhite(S) = true if hasUpperRightCornerWhite(S) and not(isUpperRightCornerSolved(S)) and not(isUpperRightWhiteCornerResolvable(S)).
+	eq isUpperRightCornerWrongWhite(S) = false [owise] .
+
+	op hasLowerRightWhite : State -> Bool .
+	ceq hasLowerRightWhite(s(left(L1 L2 L3 L4 L5 L6 L7 L8 L9) front(F1 F2 F3 F4 F5 F6 F7 F8 F9) right(R1 R2 R3 R4 R5 R6 R7 R8 R9) back(B1 B2 B3 B4 B5 B6 B7 B8 B9) up(U1 U0 U3 U0 U0 U0 U7 U0 U9) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true if (F9 == U0 or R7 == U0 or D3 == U0) .
+	eq hasLowerRightWhite(S) = false [owise] .
+
+	op isLowerRightCornerWrongWhite : State -> Bool .
+	ceq isLowerRightCornerWrongWhite(S) = true if hasLowerRightWhite(S) and not(isUpperRightWhiteCornerResolvable(S)) .
+	eq isLowerRightCornerWrongWhite(S) = false [owise] .
+
+	op isWhiteFaceState : State -> Bool .
+	eq isWhiteFaceState(s(left(L0 L0 L0 L4 L0 L6 L7 L8 L9) front(F0 F0 F0 F4 F0 F6 F7 F8 F9) right(R0 R0 R0 R4 R0 R6 R7 R8 R9) back(B0 B0 B0 B4 B0 B6 B7 B8 B9) up(U0 U0 U0 U0 U0 U0 U0 U0 U0) down(D1 D2 D3 D4 D5 D6 D7 D8 D9))) = true .
+	eq isWhiteFaceState(S) = false [owise] .
+
+	op isOnlyWhiteFaceState : State -> Bool .
+	ceq isOnlyWhiteFaceState(S) = true if isWhiteFaceState(S) and not(isSolved(S)) .
+	eq isOnlyWhiteFaceState(S) = false [owise] .
+	
+	op isSolved : State -> Bool .
+	eq isSolved(s(left(L0 L0 L0 L0 L0 L0 L0 L0 L0) front(F0 F0 F0 F0 F0 F0 F0 F0 F0) right(R0 R0 R0 R0 R0 R0 R0 R0 R0) back(B0 B0 B0 B0 B0 B0 B0 B0 B0) up(U0 U0 U0 U0 U0 U0 U0 U0 U0) down(D0 D0 D0 D0 D0 D0 D0 D0 D0))) = true .
+	eq isSolved(S) = false [owise] .
+
+	op yCross : State -> State .
+	eq yCross(S) = Ri(U(U(R(U(Ri(U(R(S)))))))) .
+
+	op yCrossi : State -> State .
+	eq yCrossi(S) = L(Ui(Ui(Li(Ui(L(Ui(Li(S)))))))) .
+
+	op yFace : State -> State .
+	eq yFace(S) = R(R(B(B(Ri(Fi(R(B(B(Ri(F(Ri(S)))))))))))) .
+
+	op yFacei : State -> State .
+	eq yFacei(S) = Li(Li(Bi(Bi(L(F(Li(Bi(Bi((L(Fi(L(S))))))))))))) .
+
+	op sLayer : State -> State .
+	eq sLayer(S) = R(F(U(Fi(Ui(Ri(S)))))) .
+
+	op sLayeri : State -> State .
+	eq sLayeri(S) = Li(Fi(Ui(F(U(L(S)))))) .
+
+	op fLayer : State -> State .
+	eq fLayer(S) = F(U(Fi(Ui(Ri(Ui(R(U(S)))))))) .
+
+	op fLayeri : State -> State .
+	eq fLayeri(S) = Fi(Ui(F(U(L(U(Li(Ui(S)))))))) .
+
+	op wCrossF : State -> State .
+	eq wCrossF(S) = Fi(D(F(S))) .
+
+	op wCrossR : State -> State .
+	eq wCrossR(S) = R(Di(Ri(S))) .
+
+	op wCrossD : State -> State .
+	eq wCrossD(S) = F(Li(D(D(L(F(S)))))) .
+
+	--- op wDotL : State -> State .
+	--- eq wDotL(S) = F(S) .
+
+	--- op wDotR : State -> State .
+	--- eq wDotR(S) = Fi(S) .
+	
+	op wDotB : State -> State .
+	eq wDotB(S) = U(R(Ui(Fi(S)))) .
+
+endfm
+
+mod RUBIK-ALG is
+	protecting RUBIK-OP .
+
+	var S : State .
+
+	crl [rotate] : S => yawCW(S) if isReallyFinalState(S) and not(isFinalState(S)) .
+	crl [finalMove] : S => yCrossi(yawCW(yCross(S))) if isFinalState(S) .
+	crl [finalMoveInverse] : S => yCross(yawCCW(yCrossi(S))) if isFinalState(S) .
+
+	crl [rotateYellowFace] : S => yawCW(S) if isOnlyYellowFaceState(S) .
+	crl [yellowFace] : S => yFace(S) if isOnlyYellowFaceState(S) .
+	crl [yellowFaceInverse] : S => yFacei(S) if isOnlyYellowFaceState(S) .
+
+	crl [rotateYellowCross] : S => yawCW(S) if isOnlyYellowCrossState(S) .
+	crl [yellowCross] : S => yCross(S) if isOnlyYellowCrossState(S) .
+	crl [yellowCrossInverse] : S => yCrossi(S) if isOnlyYellowCrossState(S) .
+
+	crl [rotateSecondLayer] : S => yawCW(S) if isOnlySecondLayerState(S) .
+	crl [secondLayer] : S => sLayer(S) if isOnlySecondLayerState(S) .
+	crl [secondLayerInverse] : S => sLayeri(S) if isOnlySecondLayerState(S) .
+
+	crl [toFrontResolvable] : S => U(S) if isOnlyFrontResolvable(S) .
+	crl [firstLayer] : S => fLayer(S) if isFrontRightResolvable(S) .
+	crl [firstLayerMissplaced] : S => fLayer(S) if isFrontRightMissplaced(S) .
+	crl [firstLayerInverse] : S => fLayeri(S) if isFrontLeftResolvable(S) or isFrontLeftMissplaced(S) .
+	crl [firstLayerMissplacedInverse] : S => fLayeri(S) if isFrontLeftMissplaced(S) .
+	crl [rotateFirstLayer] : S => yawCW(S) if mustRotate(S) .
+
+	crl [rollTheCube] : S => roll(roll(S)) if isOnlyWhiteFaceState(S) .
+
+	crl [toUpperRightCornerResolvable] : S => D(S) if isUpperRightWhiteCornerReallyResolvable(S) and isOnlyWhiteCrossAlignedState(S) .
+	crl [rotateWhiteCross-solved] : S => yawCW(S) if isUpperRightCornerSolved(S) and isOnlyWhiteCrossAlignedState(S) .
+	crl [rotateWhiteCross-unresolvable] : S => yawCW(S) if (not(isUpperRightWhiteCornerReallyResolvable(S)) and not(isUpperRightCornerSolved(S))) and isOnlyWhiteCrossAlignedState(S) and not(isUpperRightCornerWrongWhite(S)) .
+	crl [shiftDown] : S => D(S) if (not(isUpperRightWhiteCornerReallyResolvable(S))) and isUpperRightCornerWrongWhite(S) and isLowerRightCornerWrongWhite(S) and isOnlyWhiteCrossAlignedState(S) .
+	crl [upperRightCornerWrong] : S => wCrossF(S) if isUpperRightCornerWrongWhite(S) and not(isLowerRightCornerWrongWhite(S)) and isOnlyWhiteCrossAlignedState(S) .
+	crl [lowerRightCornerFront] : S => wCrossF(S) if isLowerRightWhiteCornerFront(S) and isOnlyWhiteCrossAlignedState(S) .
+	crl [lowerRightCornerRight] : S => wCrossR(S) if isLowerRightWhiteCornerRight(S) and isOnlyWhiteCrossAlignedState(S) .
+	crl [lowerRightCornerDown] : S => wCrossD(S) if isLowerRightWhiteCornerDown(S) and isOnlyWhiteCrossAlignedState(S) .
+
+	crl [toAlignedFront] : S => U(S) if isOnlyWhiteCrossState(S) .
+	crl [alignByFinalMove] : S => yCrossi(yawCW(yCross(yawCW(yawCW(S))))) if isAlignableByFinalMove(S) and isOnlyWhiteCrossState(S) .
+	crl [alignByFinalMoveInverse] : S => yCross(yawCCW(yCrossi(yawCW(yawCW(S))))) if isAlignableByInverseFinalMove(S) and isOnlyWhiteCrossState(S) .
+	crl [alignByLeft] : S => Ui(yCrossi(yawCW(yawCW(S)))) if isAlignableByLeft(S) and isOnlyWhiteCrossState(S) .
+	crl [alignByRight] : S => U(yCross(yawCW(yawCW(S)))) if isAlignableByRight(S) and isOnlyWhiteCrossState(S) .
+	crl [alignBySwap] : S => yCross(S) if isAlignableBySwap(S) and isOnlyWhiteCrossState(S) .
+
+endm
+
+mod RUBIK-WC is 
+	protecting RUBIK-OP .
+
+	var S : State .
+
+	crl [toUpperEdgeResolvable] : S => U(S) if hasFrontWhiteEdge(S) and hasUpperWhiteEdge(S) .
+	crl [rotateWhiteDot] : S => yawCW(S) if isOnlyWhiteDotState(S) and not(hasFrontWhiteEdge(S)) .
+	crl [whiteDotLeft] : S => F(S) if hasWhiteEdgeInLeft(S) and not(hasUpperWhiteEdge(S)) .
+	crl [whiteDotRight] : S => Fi(S) if hasWhiteEdgeInRight(S) and not(hasUpperWhiteEdge(S)) .
+	crl [whiteDotBottom] : S => wDotB(S) if hasWhiteEdgeInFrontBottom(S) and not(hasUpperWhiteEdge(S)) .
+	--- whiteDotUp has one more condition to avoid possible loop with whiteDotBottom
+	crl [whiteDotUp] : S => F(F(S)) if hasWhiteEdgeInFrontUp(S) and not(hasUpperWhiteEdge(S)) and not(hasWhiteEdgeInFrontBottom(S)) .
+
+endm
