@@ -37,6 +37,6 @@ while(True):
         print("Arrivederci")
         break
 
-# Display the blockchain
+
 for block in blockchain.chain:
     print(f"Block {block.index} - Data: {block.data} - Time: {block.timestamp}")
