@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Processed Numbers</title>
+</head>
+<body>
+    <h2>Processed Random Numbers</h2>
+    <?php
+    if (isset($_POST['numbers'])) {
+        $numbers = $_POST['numbers'];
+        echo "Received an array of 10 random numbers:<br>";
+        foreach ($numbers as $number) {
+            echo $number . "<br>";
+        }
+    } else {
+        echo "No data received.";
+    }
+    ?>
+</body>
+</html>

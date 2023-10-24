@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Send Random Numbers</title>
+</head>
+<body>
+    <h1>Send Random Numbers to Django</h1>
+    <form action="http://127.0.0.1:8000/api/sort-array/" method="post">
+        <?php
+        $random_numbers = [];
+        for ($i = 0; $i < 10; $i++) {
+            $random_number = rand(1, 100);
+            $random_numbers[] = $random_number;
+        }
+        
+        foreach ($random_numbers as $number) {
+            echo "<input type='hidden' name='array[]' value='$number'>";
+        }
+        ?>
+        <button type="submit" name="submit">Send Array</button>
+    </form>
+</body>
+</html>
