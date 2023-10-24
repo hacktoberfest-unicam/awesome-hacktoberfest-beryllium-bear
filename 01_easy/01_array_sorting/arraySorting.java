@@ -1,3 +1,13 @@
+public static void main(String[] args) {
+    int[] arr = {64, 34, 25, 12, 22, 11};
+    int[] sortedArr = arraySorting.selectionSort(arr);
+
+    System.out.println("Sorted array:");
+    for (int value : sortedArr) {
+        System.out.print(value + " ");
+    }
+}
+
 public static int[] selectionSort(int[] array) {
   // Creo una copia dell'array in input per non toccare l'originale
   int[] sortedArray = array.clone();
