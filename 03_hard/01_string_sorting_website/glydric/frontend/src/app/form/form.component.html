@@ -1,0 +1,12 @@
+<h1>Add values separating with ;</h1>
+Usable algorithms: quicksort, bubblesort, mergesort, heapsort, selectionsort
+<form (ngSubmit)="submitForm()" #myForm="ngForm">
+  <label for="values">Values:</label>
+  <input type="text" name="values" id="values" [(ngModel)]="formData.values" /><br />
+
+  <label for="type">Type:</label>
+  <input type="text" name="type" id="type" [(ngModel)]="formData.type" /><br />
+
+  <button type="submit">Invia richiesta POST</button>
+</form>
+<h3>Response: {{response}}</h3>
